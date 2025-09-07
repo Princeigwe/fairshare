@@ -17,6 +17,16 @@ const wallet = new ethers.Wallet(eoAddressPrivateKey, provider);
 const fairShareContractConnect = new ethers.Contract(fairShareAddress, abi, wallet);
 
 
+async function createGroup(name: string, description: string) {
+  try {
+    const tx = await fairShareContractConnect.createGroup(name, description);
+    console.log("Group created successfully:", tx);
+  } catch (error) {
+    console.error("Error creating group:", error);
+  }
+}
+
+
 async function getGroups() {
   try {
     const groups = await fairShareContractConnect.getGroups();
@@ -27,4 +37,16 @@ async function getGroups() {
 }
 
 
-getGroups()
+async function getGroup(groupTag: string) {
+  try {
+    const group = await fairShareContractConnect.getGroup(groupTag);
+    console.log("Group:", group);
+  } catch (error) {
+    console.error("Error fetching group:", error);
+  }
+}
+
+
+// createGroup("Group Name", "Group Description")
+// getGroups()
+getGroup("Group Name-0")
