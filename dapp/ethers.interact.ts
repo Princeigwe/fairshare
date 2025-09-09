@@ -7,7 +7,7 @@ dotenv.config()
 const providerUrl = process.env.PROVIDER_URL || "http://localhost:8545";
 const provider = new ethers.JsonRpcProvider(providerUrl);
 
-const fairShareAddress = `0x0165878A594ca255338adfa4d48449f69242Eb8F`;
+const fairShareAddress = `0x610178dA211FEF7D417bC0e6FeD39F05609AD788`;
 
 const hardhatPrivateKey = `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`
 
@@ -71,4 +71,4 @@ async function getGroupMembers(groupTag: string) {
 // getGroup("Group Name-0")
 // addMember("Group Name-0", "0x70997970C51812dc3A010C7d01b50e0d17dc79C8", "mattedy")
 // addMember("Group Name-0", "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC", "slyX")
-// getGroupMembers("Group Name-0")
+getGroupMembers("Group Name-0")

@@ -234,6 +234,11 @@ export const abi = [
                   "internalType": "string",
                   "name": "displayName",
                   "type": "string"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "balance",
+                  "type": "uint256"
                 }
               ],
               "internalType": "struct FairShare.GroupMember[]",

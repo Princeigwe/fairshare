@@ -11,6 +11,7 @@ contract FairShare {
   struct GroupMember{
     address addr;
     string displayName;
+    uint256 balance;
   }
 
   // structs
@@ -74,7 +75,8 @@ contract FairShare {
     // add the sender creating the group as a member of the group
     GroupMember memory theAlpha = GroupMember({
       addr: msg.sender,
-      displayName: "The Alpha"
+      displayName: "The Alpha",
+      balance: 0
     });
     groupMembers[newGroup.tag].push(theAlpha);
 
@@ -104,7 +106,8 @@ contract FairShare {
     Group storage _group = group[_groupTag]; // marking it as 'storage' to make reference to existing struct for updates
     GroupMember memory newMember = GroupMember({
       addr: _addr,
-      displayName: _displayName
+      displayName: _displayName,
+      balance: 0
     });
     userDisplayName[msg.sender] = newMember.displayName;
     isGroupMember[_groupTag][_addr] = true;
@@ -112,6 +115,8 @@ contract FairShare {
     
     groupMembers[_groupTag].push(newMember);
     _group.memberCount = _group.memberCount + 1;
+
+    groupUserBalance[_groupTag][_addr] = 0;
 
     AddedMemberResponse memory response = AddedMemberResponse({
       message: string(abi.encodePacked("New member added to ", _groupTag)),
