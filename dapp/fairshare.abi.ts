@@ -92,9 +92,53 @@ export const abi = [
       "type": "event"
     },
     {
-      "inputs": [],
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_groupTag",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "_addr",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "_displayName",
+          "type": "string"
+        }
+      ],
       "name": "addMember",
-      "outputs": [],
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "message",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "displayName",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "addr",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "groupTag",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct FairShare.AddedMemberResponse",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
       "stateMutability": "nonpayable",
       "type": "function"
     },
@@ -120,7 +164,7 @@ export const abi = [
       "inputs": [
         {
           "internalType": "string",
-          "name": "groupTag",
+          "name": "_groupTag",
           "type": "string"
         }
       ],
@@ -160,6 +204,49 @@ export const abi = [
             }
           ],
           "internalType": "struct FairShare.Group",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_groupTag",
+          "type": "string"
+        }
+      ],
+      "name": "getGroupMembers",
+      "outputs": [
+        {
+          "components": [
+            {
+              "components": [
+                {
+                  "internalType": "address",
+                  "name": "addr",
+                  "type": "address"
+                },
+                {
+                  "internalType": "string",
+                  "name": "displayName",
+                  "type": "string"
+                }
+              ],
+              "internalType": "struct FairShare.GroupMember[]",
+              "name": "members",
+              "type": "tuple[]"
+            },
+            {
+              "internalType": "uint256",
+              "name": "memberCount",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct FairShare.GroupMembersResponse",
           "name": "",
           "type": "tuple"
         }
