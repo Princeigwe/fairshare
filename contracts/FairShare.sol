@@ -6,12 +6,13 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 contract FairShare {
 
   uint256 groupId = 0;
+  uint256 expenseId = 0;
 
   //* STRUCTS
   struct GroupMember{
     address addr;
     string displayName;
-    uint256 balance;
+    int256 balance;
   }
 
   // structs
@@ -21,7 +22,18 @@ contract FairShare {
     string tag;
     string description;
     uint256 memberCount;
-    uint256 balance;
+    uint256 contribution; // total Ether contributions to the group
+  }
+
+  struct Expense{
+    string name;
+    uint256 id;
+    string tag;
+    uint256 amount;
+    string paidByDisplayName;
+    address paidByAddr;
+    address payeeAddr;
+    uint256 date; // timestamp
   }
 
   struct AddedMemberResponse{
@@ -33,6 +45,13 @@ contract FairShare {
 
   struct GroupMembersResponse{
     GroupMember[] members;
+    uint256 memberCount;
+  }
+
+  struct PaidExpenseResponse{
+    string message;
+    string groupTag;
+    Expense expense;
     uint256 memberCount;
   }
 
@@ -57,9 +76,15 @@ contract FairShare {
 
   mapping(string => Group)group;
 
+  // group expenses
+  mapping(string => Expense[]) private groupExpenses;
+
   //* EVENTS
   event CreatedGroup(string message, string name, uint256 id, string tag, string description, uint256 memberCount, uint256 balance);
   event GroupDetail(string name, uint256 id, string tag, string description, uint256 memberCount, uint256 balance); 
+
+  // function to receive Ether
+  receive() external payable {}
 
   function createGroup(string memory _name, string memory _description)public{
     string memory groupStringId = Strings.toString(groupId); // converting int to string with OZ Strings library
@@ -69,7 +94,7 @@ contract FairShare {
       tag: string(abi.encodePacked(_name,"-" ,groupStringId)),
       description: _description,
       memberCount: 1,
-      balance: 0
+      contribution: 0
     });
 
     // add the sender creating the group as a member of the group
@@ -88,7 +113,7 @@ contract FairShare {
     groupTags.push(newGroup.tag);
 
     groupId++;
-    emit CreatedGroup("Group created", newGroup.name, newGroup.id, newGroup.tag, newGroup.description, newGroup.memberCount, newGroup.balance);
+    emit CreatedGroup("Group created", newGroup.name, newGroup.id, newGroup.tag, newGroup.description, newGroup.memberCount, newGroup.contribution);
   }
 
   function getGroups() public view returns(string[] memory){
@@ -138,4 +163,53 @@ contract FairShare {
     return groupMembersResponse;
   }
 
+  function payExpense(string memory _groupTag, string memory _name , address payable _payee)public payable returns(PaidExpenseResponse memory){
+    require(isGroupMember[_groupTag][msg.sender], "Unauthorized request to pay expense");
+    require(msg.value > 0, "Must send ETH to pay expense");
+    require(_payee != address(0), "Invalid payee address");
+
+    string memory expenseStringId = Strings.toString(expenseId); // converting int to string with OZ Strings library
+    // create a new expense
+    Expense memory newExpense = Expense({
+      name: _name,
+      id: expenseId,
+      tag: string(abi.encodePacked(_name,"-" ,expenseStringId)),
+      amount: msg.value,
+      paidByAddr: msg.sender,
+      paidByDisplayName: userDisplayName[msg.sender],
+      date: block.timestamp,
+      payeeAddr: _payee
+    });
+
+    // update group expenses
+    groupExpenses[_groupTag].push(newExpense);
+
+    expenseId++;
+
+    GroupMember[] storage _groupMembers = groupMembers[_groupTag];
+    Group storage groupUpdate = group[_groupTag];
+    uint256 memberCount = group[_groupTag].memberCount;
+
+    int256 share = int256(msg.value) / int256(memberCount);
+    for(uint256 i = 0; i < _groupMembers.length; i++){
+      GroupMember storage memberUpdate =  _groupMembers[i];
+      memberUpdate.balance = -share;
+      if(memberUpdate.addr == msg.sender){
+        memberUpdate.balance = memberUpdate.balance + int256(msg.value);
+      }
+    }
+
+    groupUpdate.contribution = groupUpdate.contribution + msg.value;
+
+    // transfer funds to payee
+    _payee.transfer(msg.value);
+
+    PaidExpenseResponse memory response = PaidExpenseResponse({
+      message: "Expense paid successfully",
+      groupTag: _groupTag,
+      expense: newExpense,
+      memberCount: memberCount
+    });
+    return response;
+  }
 }
