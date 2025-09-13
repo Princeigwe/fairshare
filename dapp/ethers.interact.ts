@@ -76,6 +76,17 @@ async function payExpense(groupTag: string, expenseName: string, amountEther: st
 }
 
 
+async function getPayeeWalletBalance(payeeAddress: string) {
+  try {
+    const balance = await provider.getBalance(payeeAddress);
+    console.log(`Payee Wallet Balance (${payeeAddress}):`, ethers.formatEther(balance));
+  } catch (error) {
+    console.error("Error fetching payee wallet balance:", error);
+  }
+}
+
+
+
 // createGroup("Group Name", "Group Description")
 // getGroups()
 // getGroup("Group Name-0")
@@ -85,4 +96,6 @@ async function payExpense(groupTag: string, expenseName: string, amountEther: st
 
 
 const dummyPayeeAddress = `0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199`
-payExpense("Group Name-0", "Dinner", "0.01", dummyPayeeAddress)
+// payExpense("Group Name-0", "Dinner", "0.01", dummyPayeeAddress)
+
+getPayeeWalletBalance(dummyPayeeAddress)
