@@ -48,13 +48,6 @@ contract FairShare {
     uint256 memberCount;
   }
 
-  struct PaidExpenseResponse{
-    string message;
-    string groupTag;
-    Expense expense;
-    uint256 memberCount;
-  }
-
   //* ARRAYS
   // groups
   string[] public groupTags;
@@ -82,6 +75,8 @@ contract FairShare {
   //* EVENTS
   event CreatedGroup(string message, string name, uint256 id, string tag, string description, uint256 memberCount, uint256 balance);
   event GroupDetail(string name, uint256 id, string tag, string description, uint256 memberCount, uint256 balance); 
+  event PaidExpenseResponse(string message, string groupTag, Expense expense, uint256 memberCount);
+
 
   // function to receive Ether
   receive() external payable {}
@@ -163,7 +158,7 @@ contract FairShare {
     return groupMembersResponse;
   }
 
-  function payExpense(string memory _groupTag, string memory _name , address payable _payee)public payable returns(PaidExpenseResponse memory){
+  function payExpense(string memory _groupTag, string memory _name , address payable _payee)public payable {
     require(isGroupMember[_groupTag][msg.sender], "Unauthorized request to pay expense");
     require(msg.value > 0, "Must send ETH to pay expense");
     require(_payee != address(0), "Invalid payee address");
@@ -204,13 +199,7 @@ contract FairShare {
     // transfer funds to payee
     _payee.transfer(msg.value);
 
-    PaidExpenseResponse memory response = PaidExpenseResponse({
-      message: "Expense paid successfully",
-      groupTag: _groupTag,
-      expense: newExpense,
-      memberCount: memberCount
-    });
-    return response;
+    emit PaidExpenseResponse("Expense paid successfully", _groupTag, newExpense, memberCount);
   }
 
   function getExpenses(string memory _groupTag)public view returns(Expense[] memory){

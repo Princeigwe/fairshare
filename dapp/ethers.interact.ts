@@ -7,7 +7,7 @@ dotenv.config()
 const providerUrl = process.env.PROVIDER_URL || "http://localhost:8545";
 const provider = new ethers.JsonRpcProvider(providerUrl);
 
-const fairShareAddress = `0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9`;
+const fairShareAddress = `0x8A791620dd6260079BF849Dc5567aDC3F2FdC318`;
 
 const hardhatPrivateKey = `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`
 
@@ -69,7 +69,10 @@ async function payExpense(groupTag: string, expenseName: string, amountEther: nu
   try {
     const txOption = {value: ethers.parseEther(amountEther.toString())}
     const tx = await fairShareContractConnect.payExpense(groupTag, expenseName, payeeAddress, txOption) // calling contract function with eth value
-    console.log("Expense paid successfully:", tx);
+    fairShareContractConnect.on("PaidExpenseResponse", (message, groupTag, expense, memberCount) => { 
+      console.log("Expense Paid Event:", {message, groupTag, expense, memberCount});
+      fairShareContractConnect.removeAllListeners("PaidExpenseResponse"); // remove listener after event is captured
+    })
   } catch (error) {
     console.error("Error paying expense:", error);
   }
@@ -107,4 +110,4 @@ const dummyPayeeAddress = `0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199`
 // payExpense("Group Name-0", "Dinner", 1, dummyPayeeAddress)
 
 // getPayeeWalletBalance(dummyPayeeAddress)
-getGroupExpenses("Group Name-0")
+// getGroupExpenses("Group Name-0")

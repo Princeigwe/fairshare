@@ -1,4 +1,4 @@
-export const abi =  [
+export const abi = [
     {
       "anonymous": false,
       "inputs": [
@@ -89,6 +89,79 @@ export const abi =  [
         }
       ],
       "name": "GroupDetail",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "message",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "groupTag",
+          "type": "string"
+        },
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "id",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "tag",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "paidByDisplayName",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "paidByAddr",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "payeeAddr",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "date",
+              "type": "uint256"
+            }
+          ],
+          "indexed": false,
+          "internalType": "struct FairShare.Expense",
+          "name": "expense",
+          "type": "tuple"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "memberCount",
+          "type": "uint256"
+        }
+      ],
+      "name": "PaidExpenseResponse",
       "type": "event"
     },
     {
@@ -371,77 +444,7 @@ export const abi =  [
         }
       ],
       "name": "payExpense",
-      "outputs": [
-        {
-          "components": [
-            {
-              "internalType": "string",
-              "name": "message",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "groupTag",
-              "type": "string"
-            },
-            {
-              "components": [
-                {
-                  "internalType": "string",
-                  "name": "name",
-                  "type": "string"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "id",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "string",
-                  "name": "tag",
-                  "type": "string"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "amount",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "string",
-                  "name": "paidByDisplayName",
-                  "type": "string"
-                },
-                {
-                  "internalType": "address",
-                  "name": "paidByAddr",
-                  "type": "address"
-                },
-                {
-                  "internalType": "address",
-                  "name": "payeeAddr",
-                  "type": "address"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "date",
-                  "type": "uint256"
-                }
-              ],
-              "internalType": "struct FairShare.Expense",
-              "name": "expense",
-              "type": "tuple"
-            },
-            {
-              "internalType": "uint256",
-              "name": "memberCount",
-              "type": "uint256"
-            }
-          ],
-          "internalType": "struct FairShare.PaidExpenseResponse",
-          "name": "",
-          "type": "tuple"
-        }
-      ],
+      "outputs": [],
       "stateMutability": "payable",
       "type": "function"
     },
