@@ -1,4 +1,4 @@
-export const abi = [
+export const abi =  [
     {
       "anonymous": false,
       "inputs": [
@@ -158,6 +158,67 @@ export const abi = [
       "name": "createGroup",
       "outputs": [],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_groupTag",
+          "type": "string"
+        }
+      ],
+      "name": "getExpenses",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "id",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "tag",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "paidByDisplayName",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "paidByAddr",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "payeeAddr",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "date",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct FairShare.Expense[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {

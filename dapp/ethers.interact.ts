@@ -7,7 +7,7 @@ dotenv.config()
 const providerUrl = process.env.PROVIDER_URL || "http://localhost:8545";
 const provider = new ethers.JsonRpcProvider(providerUrl);
 
-const fairShareAddress = `0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512`;
+const fairShareAddress = `0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9`;
 
 const hardhatPrivateKey = `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`
 
@@ -65,10 +65,10 @@ async function getGroupMembers(groupTag: string) {
   }
 }
 
-async function payExpense(groupTag: string, expenseName: string, amountEther: string, payeeAddress: string) {
+async function payExpense(groupTag: string, expenseName: string, amountEther: number, payeeAddress: string) {
   try {
     const txOption = {value: ethers.parseEther(amountEther.toString())}
-    const tx = await fairShareContractConnect.payExpense(groupTag, expenseName, payeeAddress, txOption)
+    const tx = await fairShareContractConnect.payExpense(groupTag, expenseName, payeeAddress, txOption) // calling contract function with eth value
     console.log("Expense paid successfully:", tx);
   } catch (error) {
     console.error("Error paying expense:", error);
@@ -85,6 +85,14 @@ async function getPayeeWalletBalance(payeeAddress: string) {
   }
 }
 
+async function getGroupExpenses(groupTag: string) {
+  try {
+    const expenses = await fairShareContractConnect.getExpenses(groupTag);
+    console.log("Group Expenses:", expenses);
+  } catch (error) {
+    console.error("Error fetching group expenses:", error);
+  }
+}
 
 
 // createGroup("Group Name", "Group Description")
@@ -96,6 +104,7 @@ async function getPayeeWalletBalance(payeeAddress: string) {
 
 
 const dummyPayeeAddress = `0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199`
-// payExpense("Group Name-0", "Dinner", "0.01", dummyPayeeAddress)
+// payExpense("Group Name-0", "Dinner", 1, dummyPayeeAddress)
 
-getPayeeWalletBalance(dummyPayeeAddress)
+// getPayeeWalletBalance(dummyPayeeAddress)
+getGroupExpenses("Group Name-0")

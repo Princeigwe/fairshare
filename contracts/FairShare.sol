@@ -212,4 +212,10 @@ contract FairShare {
     });
     return response;
   }
+
+  function getExpenses(string memory _groupTag)public view returns(Expense[] memory){
+    require(isGroupMember[_groupTag][msg.sender], "Unauthorized request to fetch expenses for group");
+    Expense[] memory expenses = groupExpenses[_groupTag];
+    return expenses;
+  }
 }
