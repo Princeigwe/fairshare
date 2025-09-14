@@ -165,6 +165,37 @@ export const abi = [
       "type": "event"
     },
     {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "message",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "debtAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "addr",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "displayName",
+          "type": "string"
+        }
+      ],
+      "name": "Settlement",
+      "type": "event"
+    },
+    {
       "inputs": [
         {
           "internalType": "string",
@@ -231,6 +262,25 @@ export const abi = [
       "name": "createGroup",
       "outputs": [],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_groupTag",
+          "type": "string"
+        }
+      ],
+      "name": "debtOwned",
+      "outputs": [
+        {
+          "internalType": "int256",
+          "name": "",
+          "type": "int256"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -444,6 +494,19 @@ export const abi = [
         }
       ],
       "name": "payExpense",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_groupTag",
+          "type": "string"
+        }
+      ],
+      "name": "settleUp",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"

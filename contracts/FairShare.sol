@@ -76,6 +76,7 @@ contract FairShare {
   event CreatedGroup(string message, string name, uint256 id, string tag, string description, uint256 memberCount, uint256 balance);
   event GroupDetail(string name, uint256 id, string tag, string description, uint256 memberCount, uint256 balance); 
   event PaidExpenseResponse(string message, string groupTag, Expense expense, uint256 memberCount);
+  event Settlement(string message, uint256 debtAmount, address addr, string displayName);
 
 
   // function to receive Ether
@@ -129,7 +130,7 @@ contract FairShare {
       displayName: _displayName,
       balance: 0
     });
-    userDisplayName[msg.sender] = newMember.displayName;
+    userDisplayName[_addr] = newMember.displayName;
     isGroupMember[_groupTag][_addr] = true;
     groupUserBalance[_groupTag][_addr] = 0;
     
@@ -164,6 +165,7 @@ contract FairShare {
     require(_payee != address(0), "Invalid payee address");
 
     string memory expenseStringId = Strings.toString(expenseId); // converting int to string with OZ Strings library
+    string memory displayName = userDisplayName[msg.sender];
     // create a new expense
     Expense memory newExpense = Expense({
       name: _name,
@@ -171,7 +173,7 @@ contract FairShare {
       tag: string(abi.encodePacked(_name,"-" ,expenseStringId)),
       amount: msg.value,
       paidByAddr: msg.sender,
-      paidByDisplayName: userDisplayName[msg.sender],
+      paidByDisplayName: displayName,
       date: block.timestamp,
       payeeAddr: _payee
     });
@@ -188,10 +190,15 @@ contract FairShare {
     int256 share = int256(msg.value) / int256(memberCount);
     for(uint256 i = 0; i < _groupMembers.length; i++){
       GroupMember storage memberUpdate =  _groupMembers[i];
-      memberUpdate.balance = -share;
       if(memberUpdate.addr == msg.sender){
-        memberUpdate.balance = memberUpdate.balance + int256(msg.value);
+        memberUpdate.balance = memberUpdate.balance + int256(share * int256(memberCount - 1));
+        groupUserBalance[_groupTag][memberUpdate.addr] = memberUpdate.balance;
       }
+      else{
+        memberUpdate.balance = memberUpdate.balance + -share;
+        groupUserBalance[_groupTag][memberUpdate.addr] = memberUpdate.balance;
+      }
+      
     }
 
     groupUpdate.contribution = groupUpdate.contribution + msg.value;
@@ -206,5 +213,38 @@ contract FairShare {
     require(isGroupMember[_groupTag][msg.sender], "Unauthorized request to fetch expenses for group");
     Expense[] memory expenses = groupExpenses[_groupTag];
     return expenses;
+  }
+
+  function debtOwned(string memory _groupTag)public view returns(int256){
+    require(isGroupMember[_groupTag][msg.sender], "Unauthorized request to check debt owed n group");
+    return groupUserBalance[_groupTag][msg.sender];
+  }
+
+  function settleUp(string memory _groupTag) payable public{
+    require(isGroupMember[_groupTag][msg.sender], "Unauthorized request to settle up");
+    int256 balance = groupUserBalance[_groupTag][msg.sender];
+    require(balance < 0, "No debt is owed");
+    require((balance * -1) == int256(msg.value), "Incorrect ETH amount sent");
+
+    // clear debt balance
+    uint256 sharedSettlement = msg.value/uint256(groupMembers[_groupTag].length - 1);
+    groupUserBalance[_groupTag][msg.sender] = 0;
+    GroupMember[] storage _groupMembers = groupMembers[_groupTag];
+    for(uint256 i = 0; i < _groupMembers.length; i++){
+      GroupMember storage memberUpdate =  _groupMembers[i];
+      if(memberUpdate.addr == msg.sender){
+        memberUpdate.balance = 0;
+      }
+    }
+
+    // distribute settlement to other group members
+    for(uint256 i = 0; i < _groupMembers.length; i++){
+      if(_groupMembers[i].addr != msg.sender){
+        payable(_groupMembers[i].addr).transfer(sharedSettlement);
+        groupUserBalance[_groupTag][_groupMembers[i].addr] = groupUserBalance[_groupTag][_groupMembers[i].addr] - int256(sharedSettlement);
+      }
+    }
+
+    emit Settlement("Settlement successful", msg.value, msg.sender, userDisplayName[msg.sender]);
   }
 }

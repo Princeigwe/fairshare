@@ -7,14 +7,31 @@ dotenv.config()
 const providerUrl = process.env.PROVIDER_URL || "http://localhost:8545";
 const provider = new ethers.JsonRpcProvider(providerUrl);
 
-const fairShareAddress = `0x8A791620dd6260079BF849Dc5567aDC3F2FdC318`;
+const fairShareAddress = `0x7a2088a1bFc9d81c55368AE168C2C02570cB814F`;
 
-const hardhatPrivateKey = `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`
+const hardhatPrivateKey = `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80` // first wallet on the list
 
 const eoAddressPrivateKey = process.env.EO_ADDRESS_PRIVATE_KEY || hardhatPrivateKey;
 const wallet = new ethers.Wallet(eoAddressPrivateKey, provider);
 
 const fairShareContractConnect = new ethers.Contract(fairShareAddress, abi, wallet);
+
+
+// ** EXTRA DUMMY WALLET CONNECTIONS
+
+// *  CLIENT 1 - Matt
+const mattPrivateKey = `0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d` // 2nd wallet on list
+const mattWallet = new ethers.Wallet(mattPrivateKey, provider)
+const mattContractConnect = new ethers.Contract(fairShareAddress, abi, mattWallet)
+
+
+// * CLIENT 2 - SlyX
+const slyXPrivateKey = `0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a` // 3rd wallet on the list
+const slyXWallet = new ethers.Wallet(slyXPrivateKey, provider)
+const slyXContractConnect = new ethers.Contract(fairShareAddress, abi, slyXWallet)
+
+
+
 
 
 async function createGroup(name: string, description: string) {
@@ -79,7 +96,7 @@ async function payExpense(groupTag: string, expenseName: string, amountEther: nu
 }
 
 
-async function getPayeeWalletBalance(payeeAddress: string) {
+async function getWalletBalance(payeeAddress: string) {
   try {
     const balance = await provider.getBalance(payeeAddress);
     console.log(`Payee Wallet Balance (${payeeAddress}):`, ethers.formatEther(balance));
@@ -97,6 +114,76 @@ async function getGroupExpenses(groupTag: string) {
   }
 }
 
+//////////////////////////////////////////////////////////////////////
+async function getDebtOwed(groupTag: string) {
+  try {
+    const debt = await fairShareContractConnect.debtOwned(groupTag)
+    console.log("Debt owned:", `${ethers.formatEther(debt)} ETH`)
+  } catch (error) {
+    console.error("Error fetch debt for group: ", error);
+  }
+}
+
+
+async function mattGetDebtOwed(groupTag: string) {
+  try {
+    const debt = await mattContractConnect.debtOwned(groupTag)
+    console.log("Debt owned:", `${ethers.formatEther(debt)} ETH`)
+  } catch (error) {
+    console.error("Error fetch debt for group: ", error);
+  }
+}
+
+
+async function slyXGetDebtOwed(groupTag: string) {
+  try {
+    const debt = await slyXContractConnect.debtOwned(groupTag)
+    console.log("Debt owned:", `${ethers.formatEther(debt)} ETH`)
+  } catch (error) {
+    console.error("Error fetch debt for group: ", error);
+  }
+}
+///////////////////////////////////////////////////////////////////////////////////
+
+async function settleUp(groupTag: string, amountEther: number) {
+  try {
+    const txOption = {value: ethers.parseEther(amountEther.toString())}
+    await fairShareContractConnect.settleUp(groupTag, txOption)
+    fairShareContractConnect.on('Settlement', (message, debtAmount, addr, displayName) => {
+      console.log('Settlement Event', {message, debtAmount, addr, displayName})
+      fairShareContractConnect.removeAllListeners("Settlement")
+    })
+  } catch (error) {
+    console.error("Error settling debt in group: ", error);
+  }
+}
+
+async function mattSettleUp(groupTag: string, amountEther: number) {
+  try {
+    const txOption = {value: ethers.parseEther(amountEther.toString())}
+    await mattContractConnect.settleUp(groupTag, txOption)
+    mattContractConnect.on('Settlement', (message, debtAmount, addr, displayName) => {
+      console.log('Settlement Event', {message, debtAmount, addr, displayName})
+      mattContractConnect.removeAllListeners("Settlement")
+    })
+  } catch (error) {
+    console.error("Error settling debt in group: ", error);
+  }
+}
+
+
+async function slyXSettleUp(groupTag: string, amountEther: number) {
+  try {
+    const txOption = {value: ethers.parseEther(amountEther.toString())}
+    await slyXContractConnect.settleUp(groupTag, txOption)
+    slyXContractConnect.on('Settlement', (message, debtAmount, addr, displayName) => {
+      console.log('Settlement Event', {message, debtAmount, addr, displayName})
+      slyXContractConnect.removeAllListeners("Settlement")
+    })
+  } catch (error) {
+    console.error("Error settling debt in group: ", error);
+  }
+}
 
 // createGroup("Group Name", "Group Description")
 // getGroups()
@@ -107,7 +194,17 @@ async function getGroupExpenses(groupTag: string) {
 
 
 const dummyPayeeAddress = `0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199`
-// payExpense("Group Name-0", "Dinner", 1, dummyPayeeAddress)
+// payExpense("Group Name-0", "Dinner", 3, dummyPayeeAddress)
 
-// getPayeeWalletBalance(dummyPayeeAddress)
+// getWalletBalance(dummyPayeeAddress)
 // getGroupExpenses("Group Name-0")
+
+// getDebtOwed("Group Name-0")
+mattGetDebtOwed("Group Name-0")
+// slyXGetDebtOwed("Group Name-0")
+
+
+const debtAmount = 1.5
+// settleUp("Group Name-0", debtAmount)
+// mattSettleUp("Group Name-0", debtAmount)
+// slyXSettleUp("Group Name-0", debtAmount)
