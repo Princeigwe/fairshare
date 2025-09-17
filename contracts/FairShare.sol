@@ -195,7 +195,8 @@ contract FairShare {
         groupUserBalance[_groupTag][memberUpdate.addr] = memberUpdate.balance;
       }
       else{
-        memberUpdate.balance = memberUpdate.balance + -share;
+        // memberUpdate.balance = memberUpdate.balance + -share;
+        memberUpdate.balance -= share;
         groupUserBalance[_groupTag][memberUpdate.addr] = memberUpdate.balance;
       }
       
@@ -220,31 +221,54 @@ contract FairShare {
     return groupUserBalance[_groupTag][msg.sender];
   }
 
-  function settleUp(string memory _groupTag) payable public{
-    require(isGroupMember[_groupTag][msg.sender], "Unauthorized request to settle up");
-    int256 balance = groupUserBalance[_groupTag][msg.sender];
-    require(balance < 0, "No debt is owed");
-    require((balance * -1) == int256(msg.value), "Incorrect ETH amount sent");
+  function settleUp(string memory _groupTag) external payable {
+    require(isGroupMember[_groupTag][msg.sender], "Not in group");
 
-    // clear debt balance
-    uint256 sharedSettlement = msg.value/uint256(groupMembers[_groupTag].length - 1);
-    groupUserBalance[_groupTag][msg.sender] = 0;
+    int256 debtorBalance = groupUserBalance[_groupTag][msg.sender];
+    require(debtorBalance < 0, "You owe nothing");
+    uint256 debt = uint256(-debtorBalance);
+    require(msg.value <= debt, "Too much sent");
+
+    uint256 remaining = msg.value;
     GroupMember[] storage _groupMembers = groupMembers[_groupTag];
-    for(uint256 i = 0; i < _groupMembers.length; i++){
-      GroupMember storage memberUpdate =  _groupMembers[i];
-      if(memberUpdate.addr == msg.sender){
-        memberUpdate.balance = 0;
+
+    // this loop works to credit those that are being owed
+    for (uint256 i = 0; i < _groupMembers.length && remaining > 0; i++) {
+      address creditor = _groupMembers[i].addr;
+      int256 creditorBalance = groupUserBalance[_groupTag][creditor];
+
+      if (creditorBalance > 0) {
+        // if creditor balance is less than the amount of ETH sent, 
+        // then the amount to pay is the creditor balance, else the amount to pay is the amount of ETH sent
+        uint256 amountToPay = creditorBalance < int256(remaining) ? uint256(creditorBalance) : remaining;
+
+        // transfer ETH
+        payable(creditor).transfer(amountToPay);
+
+         // update balances
+        groupUserBalance[_groupTag][msg.sender] += int256(amountToPay);
+
+        groupUserBalance[_groupTag][creditor] -= int256(amountToPay);
+        _groupMembers[i].balance = groupUserBalance[_groupTag][creditor];
+
+        remaining -= amountToPay;
       }
     }
 
-    // distribute settlement to other group members
-    for(uint256 i = 0; i < _groupMembers.length; i++){
-      if(_groupMembers[i].addr != msg.sender){
-        payable(_groupMembers[i].addr).transfer(sharedSettlement);
-        groupUserBalance[_groupTag][_groupMembers[i].addr] = groupUserBalance[_groupTag][_groupMembers[i].addr] - int256(sharedSettlement);
+    for(uint256 i = 0; i < _groupMembers.length && remaining > 0; i++){
+      if(_groupMembers[i].addr == msg.sender){
+        _groupMembers[i].balance = groupUserBalance[_groupTag][msg.sender];
+        break;
       }
     }
 
     emit Settlement("Settlement successful", msg.value, msg.sender, userDisplayName[msg.sender]);
+
+    if (remaining > 0) {
+      // the overpaid ETH is sent to the contract's account, then to the sender's account
+      (bool refund, ) = payable(msg.sender).call{value: remaining}("");
+      require(refund, "Refund failed");
+    }
   }
+
 }
