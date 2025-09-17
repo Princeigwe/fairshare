@@ -12,7 +12,6 @@ contract FairShare {
   struct GroupMember{
     address addr;
     string displayName;
-    int256 balance;
   }
 
   // structs
@@ -96,8 +95,7 @@ contract FairShare {
     // add the sender creating the group as a member of the group
     GroupMember memory theAlpha = GroupMember({
       addr: msg.sender,
-      displayName: "The Alpha",
-      balance: 0
+      displayName: "The Alpha"
     });
     groupMembers[newGroup.tag].push(theAlpha);
 
@@ -127,8 +125,7 @@ contract FairShare {
     Group storage _group = group[_groupTag]; // marking it as 'storage' to make reference to existing struct for updates
     GroupMember memory newMember = GroupMember({
       addr: _addr,
-      displayName: _displayName,
-      balance: 0
+      displayName: _displayName
     });
     userDisplayName[_addr] = newMember.displayName;
     isGroupMember[_groupTag][_addr] = true;
@@ -191,13 +188,10 @@ contract FairShare {
     for(uint256 i = 0; i < _groupMembers.length; i++){
       GroupMember storage memberUpdate =  _groupMembers[i];
       if(memberUpdate.addr == msg.sender){
-        memberUpdate.balance = memberUpdate.balance + int256(share * int256(memberCount - 1));
-        groupUserBalance[_groupTag][memberUpdate.addr] = memberUpdate.balance;
+        groupUserBalance[_groupTag][memberUpdate.addr] += int256(share * int256(memberCount - 1));
       }
       else{
-        // memberUpdate.balance = memberUpdate.balance + -share;
-        memberUpdate.balance -= share;
-        groupUserBalance[_groupTag][memberUpdate.addr] = memberUpdate.balance;
+        groupUserBalance[_groupTag][memberUpdate.addr] -= share;
       }
       
     }
@@ -216,13 +210,29 @@ contract FairShare {
     return expenses;
   }
 
-  function debtOwned(string memory _groupTag)public view returns(int256){
-    require(isGroupMember[_groupTag][msg.sender], "Unauthorized request to check debt owed n group");
+  function getUserBalance(string memory _groupTag)public view returns(int256){
+    require(isGroupMember[_groupTag][msg.sender], "Unauthorized request to check balance");
     return groupUserBalance[_groupTag][msg.sender];
   }
 
+  function getGroupBalances(string memory _groupTag)public view returns(address[] memory addressesReturn, int256[] memory balancesReturn){
+    require(isGroupMember[_groupTag][msg.sender], "Unauthorized: Not a group member");
+
+    GroupMember[] storage _groupMembers = groupMembers[_groupTag];
+    uint256 memberCount = _groupMembers.length;
+    address[] memory addresses = new address[](memberCount);
+    int256[] memory balances = new int256[](memberCount);
+    for (uint256 i = 0; i < memberCount; i++) {
+      address memberAddress = _groupMembers[i].addr;
+      addresses[i] = memberAddress;
+      balances[i] = groupUserBalance[_groupTag][memberAddress];
+    }
+    return(addresses, balances);
+  }
+  
+
   function settleUp(string memory _groupTag) external payable {
-    require(isGroupMember[_groupTag][msg.sender], "Not in group");
+    require(isGroupMember[_groupTag][msg.sender], "Not a group member");
 
     int256 debtorBalance = groupUserBalance[_groupTag][msg.sender];
     require(debtorBalance < 0, "You owe nothing");
@@ -247,18 +257,9 @@ contract FairShare {
 
          // update balances
         groupUserBalance[_groupTag][msg.sender] += int256(amountToPay);
-
         groupUserBalance[_groupTag][creditor] -= int256(amountToPay);
-        _groupMembers[i].balance = groupUserBalance[_groupTag][creditor];
 
         remaining -= amountToPay;
-      }
-    }
-
-    for(uint256 i = 0; i < _groupMembers.length && remaining > 0; i++){
-      if(_groupMembers[i].addr == msg.sender){
-        _groupMembers[i].balance = groupUserBalance[_groupTag][msg.sender];
-        break;
       }
     }
 

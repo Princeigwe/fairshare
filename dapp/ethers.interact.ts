@@ -7,7 +7,7 @@ dotenv.config()
 const providerUrl = process.env.PROVIDER_URL || "http://localhost:8545";
 const provider = new ethers.JsonRpcProvider(providerUrl);
 
-const fairShareAddress = `0x4A679253410272dd5232B3Ff7cF5dbB88f295319`;
+const fairShareAddress = `0x5FbDB2315678afecb367f032d93F642f64180aa3`;
 
 const hardhatPrivateKey = `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80` // first wallet on the list
 
@@ -82,6 +82,15 @@ async function getGroupMembers(groupTag: string) {
   }
 }
 
+async function getGroupBalances(groupTag: string) {
+  try {
+    const balances = await fairShareContractConnect.getGroupBalances(groupTag);
+    console.log("Group Balances:", balances);
+  } catch (error) {
+    console.error("Error fetching group balances:", error)
+  }
+}
+
 async function payExpense(groupTag: string, expenseName: string, amountEther: number, payeeAddress: string) {
   try {
     const txOption = {value: ethers.parseEther(amountEther.toString())}
@@ -115,30 +124,30 @@ async function getGroupExpenses(groupTag: string) {
 }
 
 //////////////////////////////////////////////////////////////////////
-async function getDebtOwed(groupTag: string) {
+async function getUserBalance(groupTag: string) {
   try {
-    const debt = await fairShareContractConnect.debtOwned(groupTag)
-    console.log("Debt owned:", `${ethers.formatEther(debt)} ETH`)
+    const balance = await fairShareContractConnect.getUserBalance(groupTag)
+    console.log("Balance:", `${ethers.formatEther(balance)} ETH`)
   } catch (error) {
     console.error("Error fetch debt for group: ", error);
   }
 }
 
 
-async function mattGetDebtOwed(groupTag: string) {
+async function getMattBalance(groupTag: string) {
   try {
-    const debt = await mattContractConnect.debtOwned(groupTag)
-    console.log("Debt owned:", `${ethers.formatEther(debt)} ETH`)
+    const balance = await mattContractConnect.getUserBalance(groupTag)
+    console.log("Balance:", `${ethers.formatEther(balance)} ETH`)
   } catch (error) {
     console.error("Error fetch debt for group: ", error);
   }
 }
 
 
-async function slyXGetDebtOwed(groupTag: string) {
+async function getSlyXBalance(groupTag: string) {
   try {
-    const debt = await slyXContractConnect.debtOwned(groupTag)
-    console.log("Debt owned:", `${ethers.formatEther(debt)} ETH`)
+    const balance = await slyXContractConnect.getUserBalance(groupTag)
+    console.log("Balance:", `${ethers.formatEther(balance)} ETH`)
   } catch (error) {
     console.error("Error fetch debt for group: ", error);
   }
@@ -190,7 +199,9 @@ async function slyXSettleUp(groupTag: string, amountEther: number) {
 // getGroup("Group Name-0")
 // addMember("Group Name-0", "0x70997970C51812dc3A010C7d01b50e0d17dc79C8", "mattedy")
 // addMember("Group Name-0", "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC", "slyX")
-getGroupMembers("Group Name-0")
+// getGroupMembers("Group Name-0")
+getGroupBalances("Group Name-0")
+
 
 
 const dummyPayeeAddress = `0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199`
@@ -199,9 +210,9 @@ const dummyPayeeAddress = `0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199`
 // getWalletBalance(dummyPayeeAddress)
 // getGroupExpenses("Group Name-0")
 
-// getDebtOwed("Group Name-0")
-// mattGetDebtOwed("Group Name-0")
-// slyXGetDebtOwed("Group Name-0")
+// getUserBalance("Group Name-0")
+// getMattBalance("Group Name-0")
+// getSlyXBalance("Group Name-0")
 
 
 const debtAmount = 1

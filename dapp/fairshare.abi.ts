@@ -272,25 +272,6 @@ export const abi = [
           "type": "string"
         }
       ],
-      "name": "debtOwned",
-      "outputs": [
-        {
-          "internalType": "int256",
-          "name": "",
-          "type": "int256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_groupTag",
-          "type": "string"
-        }
-      ],
       "name": "getExpenses",
       "outputs": [
         {
@@ -403,6 +384,30 @@ export const abi = [
           "type": "string"
         }
       ],
+      "name": "getGroupBalances",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "addressesReturn",
+          "type": "address[]"
+        },
+        {
+          "internalType": "int256[]",
+          "name": "balancesReturn",
+          "type": "int256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_groupTag",
+          "type": "string"
+        }
+      ],
       "name": "getGroupMembers",
       "outputs": [
         {
@@ -418,11 +423,6 @@ export const abi = [
                   "internalType": "string",
                   "name": "displayName",
                   "type": "string"
-                },
-                {
-                  "internalType": "int256",
-                  "name": "balance",
-                  "type": "int256"
                 }
               ],
               "internalType": "struct FairShare.GroupMember[]",
@@ -451,6 +451,25 @@ export const abi = [
           "internalType": "string[]",
           "name": "",
           "type": "string[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_groupTag",
+          "type": "string"
+        }
+      ],
+      "name": "getUserBalance",
+      "outputs": [
+        {
+          "internalType": "int256",
+          "name": "",
+          "type": "int256"
         }
       ],
       "stateMutability": "view",
