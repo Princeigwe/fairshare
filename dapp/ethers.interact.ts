@@ -7,7 +7,7 @@ dotenv.config()
 const providerUrl = process.env.PROVIDER_URL || "http://localhost:8545";
 const provider = new ethers.JsonRpcProvider(providerUrl);
 
-const fairShareAddress = `0x5FbDB2315678afecb367f032d93F642f64180aa3`;
+const fairShareAddress = `0x5FC8d32690cc91D4c39d9d3abcBD16989F875707`;
 
 const hardhatPrivateKey = `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80` // first wallet on the list
 
@@ -129,7 +129,7 @@ async function getUserBalance(groupTag: string) {
     const balance = await fairShareContractConnect.getUserBalance(groupTag)
     console.log("Balance:", `${ethers.formatEther(balance)} ETH`)
   } catch (error) {
-    console.error("Error fetch debt for group: ", error);
+    console.error("Error fetch balance for user: ", error);
   }
 }
 
@@ -139,7 +139,7 @@ async function getMattBalance(groupTag: string) {
     const balance = await mattContractConnect.getUserBalance(groupTag)
     console.log("Balance:", `${ethers.formatEther(balance)} ETH`)
   } catch (error) {
-    console.error("Error fetch debt for group: ", error);
+    console.error("Error fetch balance for user: ", error);
   }
 }
 
@@ -149,7 +149,7 @@ async function getSlyXBalance(groupTag: string) {
     const balance = await slyXContractConnect.getUserBalance(groupTag)
     console.log("Balance:", `${ethers.formatEther(balance)} ETH`)
   } catch (error) {
-    console.error("Error fetch debt for group: ", error);
+    console.error("Error fetch balance for user: ", error);
   }
 }
 ///////////////////////////////////////////////////////////////////////////////////
@@ -158,8 +158,8 @@ async function settleUp(groupTag: string, amountEther: number) {
   try {
     const txOption = {value: ethers.parseEther(amountEther.toString())}
     await fairShareContractConnect.settleUp(groupTag, txOption)
-    fairShareContractConnect.on('Settlement', (message, debtAmount, addr, displayName) => {
-      console.log('Settlement Event', {message, debtAmount, addr, displayName})
+    fairShareContractConnect.on('Settlement', (message, balance, addr, displayName) => {
+      console.log('Settlement Event', {message, balance, addr, displayName})
       fairShareContractConnect.removeAllListeners("Settlement")
     })
   } catch (error) {
@@ -171,8 +171,8 @@ async function mattSettleUp(groupTag: string, amountEther: number) {
   try {
     const txOption = {value: ethers.parseEther(amountEther.toString())}
     await mattContractConnect.settleUp(groupTag, txOption)
-    mattContractConnect.on('Settlement', (message, debtAmount, addr, displayName) => {
-      console.log('Settlement Event', {message, debtAmount, addr, displayName})
+    mattContractConnect.on('Settlement', (message, balance, addr, displayName) => {
+      console.log('Settlement Event', {message, balance, addr, displayName})
       mattContractConnect.removeAllListeners("Settlement")
     })
   } catch (error) {
@@ -185,8 +185,8 @@ async function slyXSettleUp(groupTag: string, amountEther: number) {
   try {
     const txOption = {value: ethers.parseEther(amountEther.toString())}
     await slyXContractConnect.settleUp(groupTag, txOption)
-    slyXContractConnect.on('Settlement', (message, debtAmount, addr, displayName) => {
-      console.log('Settlement Event', {message, debtAmount, addr, displayName})
+    slyXContractConnect.on('Settlement', (message, balance, addr, displayName) => {
+      console.log('Settlement Event', {message, balance, addr, displayName})
       slyXContractConnect.removeAllListeners("Settlement")
     })
   } catch (error) {
@@ -200,7 +200,7 @@ async function slyXSettleUp(groupTag: string, amountEther: number) {
 // addMember("Group Name-0", "0x70997970C51812dc3A010C7d01b50e0d17dc79C8", "mattedy")
 // addMember("Group Name-0", "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC", "slyX")
 // getGroupMembers("Group Name-0")
-getGroupBalances("Group Name-0")
+// getGroupBalances("Group Name-0")
 
 
 
@@ -218,4 +218,4 @@ const dummyPayeeAddress = `0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199`
 const debtAmount = 1
 // settleUp("Group Name-0", debtAmount)
 // mattSettleUp("Group Name-0", debtAmount)
-// slyXSettleUp("Group Name-0", debtAmount)
+slyXSettleUp("Group Name-0", debtAmount)

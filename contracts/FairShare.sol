@@ -75,7 +75,7 @@ contract FairShare {
   event CreatedGroup(string message, string name, uint256 id, string tag, string description, uint256 memberCount, uint256 balance);
   event GroupDetail(string name, uint256 id, string tag, string description, uint256 memberCount, uint256 balance); 
   event PaidExpenseResponse(string message, string groupTag, Expense expense, uint256 memberCount);
-  event Settlement(string message, uint256 debtAmount, address addr, string displayName);
+  event Settlement(string message, uint256 balance, address addr, string displayName);
 
 
   // function to receive Ether

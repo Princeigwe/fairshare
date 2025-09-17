@@ -176,7 +176,7 @@ export const abi = [
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "debtAmount",
+          "name": "balance",
           "type": "uint256"
         },
         {
