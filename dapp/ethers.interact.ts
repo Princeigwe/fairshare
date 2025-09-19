@@ -7,7 +7,7 @@ dotenv.config()
 const providerUrl = process.env.PROVIDER_URL || "http://localhost:8545";
 const provider = new ethers.JsonRpcProvider(providerUrl);
 
-const fairShareAddress = `0x5FC8d32690cc91D4c39d9d3abcBD16989F875707`;
+const fairShareAddress = `0x5FbDB2315678afecb367f032d93F642f64180aa3`;
 
 const hardhatPrivateKey = `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80` // first wallet on the list
 
@@ -197,7 +197,7 @@ async function slyXSettleUp(groupTag: string, amountEther: number) {
 // createGroup("Group Name", "Group Description")
 // getGroups()
 // getGroup("Group Name-0")
-// addMember("Group Name-0", "0x70997970C51812dc3A010C7d01b50e0d17dc79C8", "mattedy")
+addMember("Group Name-0", "0x70997970C51812dc3A010C7d01b50e0d17dc79C8", "mattedy")
 // addMember("Group Name-0", "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC", "slyX")
 // getGroupMembers("Group Name-0")
 // getGroupBalances("Group Name-0")
@@ -218,4 +218,4 @@ const dummyPayeeAddress = `0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199`
 const debtAmount = 1
 // settleUp("Group Name-0", debtAmount)
 // mattSettleUp("Group Name-0", debtAmount)
-slyXSettleUp("Group Name-0", debtAmount)
+// slyXSettleUp("Group Name-0", debtAmount)

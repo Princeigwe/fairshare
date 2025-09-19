@@ -122,6 +122,7 @@ contract FairShare {
 
   function addMember(string memory _groupTag, address _addr, string memory _displayName)public returns(AddedMemberResponse memory) {
     require(isGroupAdmin[_groupTag][msg.sender], "Unauthorized request to add group member");
+    require(!isGroupMember[_groupTag][_addr], "This address is already a member of this group");
     Group storage _group = group[_groupTag]; // marking it as 'storage' to make reference to existing struct for updates
     GroupMember memory newMember = GroupMember({
       addr: _addr,
