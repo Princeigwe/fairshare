@@ -253,12 +253,12 @@ contract FairShare {
         // then the amount to pay is the creditor balance, else the amount to pay is the amount of ETH sent
         uint256 amountToPay = creditorBalance < int256(remaining) ? uint256(creditorBalance) : remaining;
 
-        // transfer ETH
-        payable(creditor).transfer(amountToPay);
-
-         // update balances
+        // update balances
         groupUserBalance[_groupTag][msg.sender] += int256(amountToPay);
         groupUserBalance[_groupTag][creditor] -= int256(amountToPay);
+
+        // transfer ETH
+        payable(creditor).transfer(amountToPay);
 
         remaining -= amountToPay;
       }
@@ -268,8 +268,7 @@ contract FairShare {
 
     if (remaining > 0) {
       // the overpaid ETH is sent to the contract's account, then to the sender's account
-      (bool refund, ) = payable(msg.sender).call{value: remaining}("");
-      require(refund, "Refund failed");
+      payable(msg.sender).transfer(remaining);
     }
   }
 

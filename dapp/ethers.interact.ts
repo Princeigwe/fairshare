@@ -197,7 +197,7 @@ async function slyXSettleUp(groupTag: string, amountEther: number) {
 // createGroup("Group Name", "Group Description")
 // getGroups()
 // getGroup("Group Name-0")
-addMember("Group Name-0", "0x70997970C51812dc3A010C7d01b50e0d17dc79C8", "mattedy")
+// addMember("Group Name-0", "0x70997970C51812dc3A010C7d01b50e0d17dc79C8", "mattedy")
 // addMember("Group Name-0", "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC", "slyX")
 // getGroupMembers("Group Name-0")
 // getGroupBalances("Group Name-0")
@@ -208,6 +208,10 @@ const dummyPayeeAddress = `0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199`
 // payExpense("Group Name-0", "Dinner", 3, dummyPayeeAddress)
 
 // getWalletBalance(dummyPayeeAddress)
+
+// getting the wallet balance of the alpha
+getWalletBalance(`0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`)
+
 // getGroupExpenses("Group Name-0")
 
 // getUserBalance("Group Name-0")
@@ -215,7 +219,7 @@ const dummyPayeeAddress = `0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199`
 // getSlyXBalance("Group Name-0")
 
 
-const debtAmount = 1
+const debtAmount = 1.5
 // settleUp("Group Name-0", debtAmount)
 // mattSettleUp("Group Name-0", debtAmount)
 // slyXSettleUp("Group Name-0", debtAmount)
