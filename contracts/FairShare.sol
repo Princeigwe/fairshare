@@ -32,7 +32,6 @@ contract FairShare {
     string paidByDisplayName;
     address paidByAddr;
     address payeeAddr;
-    uint256 date; // timestamp
   }
 
   struct AddedMemberResponse{
@@ -172,7 +171,6 @@ contract FairShare {
       amount: msg.value,
       paidByAddr: msg.sender,
       paidByDisplayName: displayName,
-      date: block.timestamp,
       payeeAddr: _payee
     });
 
