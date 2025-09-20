@@ -142,11 +142,6 @@ export const abi =  [
               "internalType": "address",
               "name": "payeeAddr",
               "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "date",
-              "type": "uint256"
             }
           ],
           "indexed": false,
@@ -310,11 +305,6 @@ export const abi =  [
               "internalType": "address",
               "name": "payeeAddr",
               "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "date",
-              "type": "uint256"
             }
           ],
           "internalType": "struct FairShare.Expense[]",
