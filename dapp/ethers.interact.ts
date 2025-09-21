@@ -7,11 +7,12 @@ dotenv.config()
 const providerUrl = process.env.PROVIDER_URL || "http://localhost:8545";
 const provider = new ethers.JsonRpcProvider(providerUrl);
 
-const fairShareAddress = `0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9`;
+// const fairShareAddress = `0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9`; // local address on hardhat
+const fairShareAddress = `0x7027379c68ce3f4CD3E6779B042a355F222AD5Ba`; // address on base sepolia
 
 const hardhatPrivateKey = `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80` // first wallet on the list
 
-const eoAddressPrivateKey = process.env.EO_ADDRESS_PRIVATE_KEY || hardhatPrivateKey;
+const eoAddressPrivateKey = `${process.env.WALLET_PRIVATE_KEY}` || hardhatPrivateKey;
 const wallet = new ethers.Wallet(eoAddressPrivateKey, provider);
 
 const fairShareContractConnect = new ethers.Contract(fairShareAddress, abi, wallet);
@@ -210,7 +211,7 @@ const dummyPayeeAddress = `0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199`
 // getWalletBalance(dummyPayeeAddress)
 
 // getting the wallet balance of the alpha
-getWalletBalance(`0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`)
+// getWalletBalance(`${process.env.WALLET_ADDRESS}`)
 
 // getGroupExpenses("Group Name-0")
 
