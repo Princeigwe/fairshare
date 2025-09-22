@@ -2,7 +2,6 @@
 
 A Solidity smart contract that helps groups of friends fairly split expenses **on-chain**.  
 No more awkward calculations, IOUs, or trust issues - everything is transparent and verifiable on Ethereum.
-Sepolia Explorer: https://sepolia.basescan.org/address/0x7027379c68ce3f4CD3E6779B042a355F222AD5Ba
 ---
 
 ## Features
@@ -11,6 +10,12 @@ Sepolia Explorer: https://sepolia.basescan.org/address/0x7027379c68ce3f4CD3E6779
 - Automatically updates everyone’s balances (who owes and who is owed).  
 - Members can settle up directly on-chain by paying back what they owe.  
 - Balances are always transparent and auditable on the blockchain.  
+
+---
+
+## Deployed Contract
+FairShare is live on **Base Sepolia** testnet:  
+🔗 [View on BaseScan](https://sepolia.basescan.org/address/0x7027379c68ce3f4CD3E6779B042a355F222AD5Ba)
 
 ---
 
