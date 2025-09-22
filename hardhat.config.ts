@@ -14,7 +14,10 @@ const config: HardhatUserConfig = {
       url: 'https://sepolia.base.org',
       accounts: [process.env.WALLET_PRIVATE_KEY as string]
     }
-  }
+  },
+  etherscan: {
+    apiKey: process.env.FAIRSHARE_SEPOLIA_ETHERSCAN_API_KEY,
+  },
 };
 
 export default config;

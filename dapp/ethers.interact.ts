@@ -7,7 +7,7 @@ dotenv.config()
 const providerUrl = process.env.PROVIDER_URL || "http://localhost:8545";
 const provider = new ethers.JsonRpcProvider(providerUrl);
 
-// const fairShareAddress = `0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9`; // local address on hardhat
+
 const fairShareAddress = `0x7027379c68ce3f4CD3E6779B042a355F222AD5Ba`; // address on base sepolia
 
 const hardhatPrivateKey = `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80` // first wallet on the list
@@ -195,7 +195,7 @@ async function slyXSettleUp(groupTag: string, amountEther: number) {
   }
 }
 
-// createGroup("Group Name", "Group Description")
+createGroup("Group Name", "Group Description")
 // getGroups()
 // getGroup("Group Name-0")
 // addMember("Group Name-0", "0x70997970C51812dc3A010C7d01b50e0d17dc79C8", "mattedy")
